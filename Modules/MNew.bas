@@ -21,3 +21,6 @@ Public Function VVariantPtrVt(vt As EVbVarType, aValue) As VVariantPtr
     Set VVariantPtrVt = New VVariantPtr: VVariantPtrVt.NewVt vt, aValue
 End Function
 
+Public Function TestDummy(aName As String) As TestDummy
+    Set TestDummy = New TestDummy: TestDummy.New_ aName
+End Function

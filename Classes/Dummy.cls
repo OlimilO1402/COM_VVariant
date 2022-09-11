@@ -15,6 +15,13 @@ Option Explicit
 
 Public Name As String
 
+Friend Sub New_(aName As String)
+    Name = aName
+End Sub
+'Public Function TestDummy(aName As String) As TestDummy
+'    Set TestDummy = New TestDummy: TestDummy.New_ aName
+'End Function
+
 Public Function ToStr() As String
     ToStr = Name
 End Function
