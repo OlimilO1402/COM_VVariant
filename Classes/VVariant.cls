@@ -72,7 +72,6 @@ End Type
 
 Private m_Var As TVar
 
-
 Friend Sub New_(Value)
     If IsObject(Value) Then Set m_Var.Value = Value Else m_Var.Value = Value
 End Sub
@@ -200,7 +199,15 @@ Public Function VAbs() As VVariant
 End Function
 Public Function VAdd(Value) As VVariant
     'Returns the sum of two variants.
-    Dim vRes: If VarAdd(m_Var.Value, Value, vRes) = S_OK Then m_Var.Value = vRes
+    Dim vRes, hr As Long
+    
+    hr = VarAdd(m_Var.Value, Value, ByVal VarPtr(vRes))
+    If hr = S_OK Then
+        m_Var.Value = vRes
+    Else
+        Debug.Print Hex(hr)
+        Debug.Print WinApiError_ToStr(hr)
+    End If
     Set VAdd = Me
 End Function
 Public Function VAnd(Value) As VVariant

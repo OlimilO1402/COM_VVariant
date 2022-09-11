@@ -195,4 +195,21 @@ Private Sub BtnTestArithmetic_Click()
     v2.VEqv v
     DebugPrint VVariant_ToDebugStr2(v2)
     
+    v = 2147483646
+    DebugPrint "Creating a new v1:"
+    Set v1 = MNew.VVariantVt(EVbVarType.vbULong, v)
+    DebugPrint VVariant_ToDebugStr2(v1)
+    
+    DebugPrint "Cloning v1 to v2:"
+    Set v2 = v1.Clone
+    DebugPrint VVariant_ToDebugStr2(v2)
+        
+    DebugPrint "Adding " & v2.Value & " to v1:"
+    v1.VAdd v2.Value
+    DebugPrint VVariant_ToDebugStr2(v1)
+    
+    v = v1.Value
+    Set v2 = MNew.VVariant(v)
+    DebugPrint VVariant_ToDebugStr2(v2)
+    
 End Sub
