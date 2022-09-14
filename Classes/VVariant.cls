@@ -81,6 +81,16 @@ Friend Sub NewVt(Optional ByVal vt As EVbVarType = EVbVarType.vbIllegal, Optiona
     If vt <> EVbVarType.vbIllegal Then Me.VarType = vt
 End Sub
 
+'Public Function VVariant(aValue) As VVariant
+'    'Create a VVariant-object with a Variant
+'    Set VVariant = New VVariant: VVariant.New_ aValue
+'End Function
+'Public Function VVariantVt(vt As EVbVarType, aValue) As VVariant
+'    'Create a VVariant-object with a Variant and set the vartype yourself,
+'    'like e.g. give a signed Long and set vt to unsigned Long
+'    Set VVariantVt = New VVariant: VVariantVt.NewVt vt, aValue
+'End Function
+
 Friend Sub NewC(other As VVariant)
     New_ other.Value
 End Sub
@@ -94,14 +104,35 @@ Public Property Get Ptr() As LongPtr
 End Property
 
 Public Property Let VarType(ByVal vt As EVbVarType)
-    RtlMoveMemory ByVal Me.Ptr, vt, 2
+    GetMem2 vt, ByVal Me.Ptr
 End Property
 Public Property Get VarType() As EVbVarType
-    RtlMoveMemory VarType, ByVal Me.Ptr, 2
+    GetMem2 ByVal Me.Ptr, VarType
 End Property
 
 Public Function VarTypeToStr() As String
     VarTypeToStr = MEVbVarType.VarType2_ToStr(m_Var.Value)
+End Function
+
+Public Property Let Slot(ByVal Index As Byte, ByVal Value As Long)
+    Const maxIndex As Byte = Variant_Size / 4 - 1
+    If Index > maxIndex Then Index = maxIndex
+    Dim pDst As LongPtr: pDst = Me.Ptr + Index * 4
+    GetMem4 Value, ByVal pDst
+End Property
+Public Property Get Slot(ByVal Index As Byte) As Long
+    Const maxIndex As Byte = Variant_Size / 4 - 1
+    If Index > maxIndex Then Index = maxIndex
+    Dim pSrc As LongPtr: pSrc = Me.Ptr + Index * 4
+    GetMem4 ByVal pSrc, Slot
+End Property
+
+Public Function HexDump() As String
+    Dim i As Long, s As String ': s = ""
+    For i = 0 To Variant_Size / 4 - 1
+        s = s & Hex$(Me.Slot(i)) & vbCrLf
+    Next
+    HexDump = s
 End Function
 
 Public Property Get SizeInBytes() As Integer
@@ -222,7 +253,13 @@ Public Function VDiv(Value) As VVariant
 End Function
 Public Function VEqv(Value) As VVariant
     'Performs a bitwise equivalence on two variants.
-    Dim vRes: If VarEqv(m_Var.Value, Value, vRes) = S_OK Then m_Var.Value = vRes
+    Dim vRes, hr As Long
+    hr = VarEqv(m_Var.Value, Value, vRes)
+    If hr = S_OK Then
+        m_Var.Value = vRes
+    Else
+        Debug.Print Hex(hr) & " " & MErr.WinApiError_ToStr(hr)
+    End If
     Set VEqv = Me
 End Function
 Public Function VFix() As VVariant

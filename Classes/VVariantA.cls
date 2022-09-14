@@ -98,6 +98,16 @@ Friend Sub NewVt(Optional ByVal vt As EVbVarType = vbIllegal, Optional aValue)
     New_ aValue
     Me.VarType = vt
 End Sub
+'
+'Public Function VVariantPtr(aValue) As VVariantPtr
+'    'Create a VVariantPtr-object with a Variant
+'    Set VVariantPtr = New VVariantPtr: VVariantPtr.New_ aValue
+'End Function
+'Public Function VVariantPtrVt(vt As EVbVarType, aValue) As VVariantPtr
+'    'Create a VVariant-object with a Variant and set the vartype yourself,
+'    'like e.g. give a signed Long and set vt to unsigned Long
+'    Set VVariantPtrVt = New VVariantPtr: VVariantPtrVt.NewVt vt, aValue
+'End Function
 
 Friend Property Let Ptr(ByVal Value As LongPtr)
     m_Var.udtptr.pvData = Value
@@ -117,6 +127,28 @@ Public Property Get VarType() As EVbVarType
 End Property
 Public Function VarTypeToStr() As String
     VarTypeToStr = MEVbVarType.VarType2_ToStr(m_Var.Ptr(0).Value)
+End Function
+
+Public Property Let Slot(ByVal Index As Byte, ByVal Value As Long)
+    Const maxIndex As Byte = Variant_Size / 4 - 1
+    If Index > maxIndex Then Index = maxIndex
+    Dim pDst As LongPtr: pDst = Me.Ptr + Index * 4
+    GetMem4 Value, ByVal pDst
+End Property
+
+Public Property Get Slot(ByVal Index As Byte) As Long
+    Const maxIndex As Byte = Variant_Size / 4 - 1
+    If Index > maxIndex Then Index = maxIndex
+    Dim pSrc As LongPtr: pSrc = Me.Ptr + Index * 4
+    GetMem4 ByVal pSrc, Slot
+End Property
+
+Public Function HexDump() As String
+    Dim i As Long, s As String ': s = ""
+    For i = 0 To Variant_Size / 4 - 1
+        s = s & Hex$(Me.Slot(i)) & vbCrLf
+    Next
+    HexDump = s
 End Function
 
 Public Property Get SizeInBytes() As Integer
@@ -301,6 +333,18 @@ End Property
 Private Property Get VVariant_SizeInBytes() As Integer
     VVariant_SizeInBytes = Me.SizeInBytes
 End Property
+
+Private Property Let VVariant_Slot(ByVal Index As Byte, ByVal RHS As Long)
+    Me.Slot(Index) = RHS
+End Property
+
+Private Property Get VVariant_Slot(ByVal Index As Byte) As Long
+    VVariant_Slot = Me.Slot(Index)
+End Property
+
+Private Function VVariant_HexDump() As String
+    VVariant_HexDump = Me.HexDump
+End Function
 
 Private Property Let VVariant_VarType(ByVal vt As EVbVarType)
     Me.VarType = vt

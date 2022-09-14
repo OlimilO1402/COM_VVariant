@@ -9,6 +9,14 @@ Begin VB.Form FMain
    ScaleHeight     =   12975
    ScaleWidth      =   9330
    StartUpPosition =   3  'Windows-Standard
+   Begin VB.CommandButton Command1 
+      Caption         =   "Command1"
+      Height          =   375
+      Left            =   5760
+      TabIndex        =   3
+      Top             =   120
+      Width           =   2535
+   End
    Begin VB.CommandButton BtnTestArithmetic 
       Caption         =   "Test Arithmetic Functions"
       BeginProperty Font 
@@ -69,6 +77,27 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
+Private Sub Command1_Click()
+    Dim v1 As VVariant: Set v1 = MNew.VVariantVt(EVbVarType.vbDecimal, &HFFFFFFFF)
+    v1.Slot(3) = &HFFFFFFFF
+    v1.Slot(1) = &HFFFF&
+    HexDump v1
+    Debug.Print v1.HexDump
+    
+    Dim v2 As VVariant: Set v2 = MNew.VVariantVt(EVbVarType.vbDecimal, 0)
+    v2.Slot(3) = &H1000&
+    Debug.Print v2.HexDump
+    
+    If v1.VEqv(v2.Value).Value = v2.Value Then
+        Debug.Print "OK"
+    End If
+    Debug.Print v1.HexDump
+    Debug.Print v2.HexDump
+End Sub
+Private Sub HexDump(v As VVariant)
+    Debug.Print v.VarTypeToStr & " " & v.Value
+    Debug.Print ""
+End Sub
 Private Sub Form_Resize()
     Dim L As Single
     Dim T As Single: T = Text1.Top
