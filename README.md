@@ -24,7 +24,7 @@ The class VVariantPtr is indeed a so called "weak-pointer" to a variant, so plea
 ```vba
 Public Sub Test()
     Dim v1 As VVariant: set v1 = MNew.VVariant(123)
-    MsgBox v1.VarType_ToStr
+    MsgBox v1.VarTypeToStr
 End Sub
 ```
 
