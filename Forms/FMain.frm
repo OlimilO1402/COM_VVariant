@@ -4,11 +4,19 @@ Begin VB.Form FMain
    ClientHeight    =   12975
    ClientLeft      =   120
    ClientTop       =   465
-   ClientWidth     =   9330
+   ClientWidth     =   11340
    LinkTopic       =   "Form1"
    ScaleHeight     =   12975
-   ScaleWidth      =   9330
+   ScaleWidth      =   11340
    StartUpPosition =   3  'Windows-Standard
+   Begin VB.CommandButton Command2 
+      Caption         =   "Command2"
+      Height          =   375
+      Left            =   8400
+      TabIndex        =   4
+      Top             =   120
+      Width           =   1455
+   End
    Begin VB.CommandButton Command1 
       Caption         =   "Command1"
       Height          =   375
@@ -98,6 +106,20 @@ Private Sub HexDump(v As VVariant)
     Debug.Print v.VarTypeToStr & " " & v.Value
     Debug.Print ""
 End Sub
+
+Private Sub Command2_Click()
+    Dim vv As VVariant
+    'Set vv = MNew.VVariantVt(vbString, Empty)
+    'MsgBox vv.GetString
+    
+    Set vv = MNew.VVariantVt(vbArray Or vbString, Empty)
+    
+    MsgBox vv.VarTypeToStr
+    
+    'MsgBox vv.Value(0)
+    
+End Sub
+
 Private Sub Form_Resize()
     Dim L As Single
     Dim T As Single: T = Text1.Top

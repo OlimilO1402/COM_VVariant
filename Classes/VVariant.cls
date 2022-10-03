@@ -15,13 +15,6 @@ Option Explicit
 'https://docs.microsoft.com/en-us/windows/win32/api/propidlbase/ns-propidlbase-propvariant
 'https://devblogs.microsoft.com/oldnewthing/20171221-00/?p=97625
 
-
-#If Win64 Then
-    Private Const Variant_Size As Long = 24
-#Else
-    Private Const Variant_Size As Long = 16
-#End If
-
 Private Const S_OK As Long = 0
 
 #If VBA7 Then
@@ -72,6 +65,16 @@ End Type
 
 Private m_Var As TVar
 
+
+Private Sub Class_Initialize()
+    '
+End Sub
+
+Private Sub Class_Terminate()
+    'delete the modified vt if the variant does not hold anything
+    Me.VarType = vbEmpty
+End Sub
+
 Friend Sub New_(Value)
     If IsObject(Value) Then Set m_Var.Value = Value Else m_Var.Value = Value
 End Sub
@@ -115,13 +118,13 @@ Public Function VarTypeToStr() As String
 End Function
 
 Public Property Let Slot(ByVal Index As Byte, ByVal Value As Long)
-    Const maxIndex As Byte = Variant_Size / 4 - 1
+    Dim maxIndex As Byte: maxIndex = MEVbVarType.SizeOf_Variant / 4 - 1
     If Index > maxIndex Then Index = maxIndex
     Dim pDst As LongPtr: pDst = Me.Ptr + Index * 4
     GetMem4 Value, ByVal pDst
 End Property
 Public Property Get Slot(ByVal Index As Byte) As Long
-    Const maxIndex As Byte = Variant_Size / 4 - 1
+    Dim maxIndex As Byte: maxIndex = MEVbVarType.SizeOf_Variant / 4 - 1
     If Index > maxIndex Then Index = maxIndex
     Dim pSrc As LongPtr: pSrc = Me.Ptr + Index * 4
     GetMem4 ByVal pSrc, Slot
@@ -129,14 +132,14 @@ End Property
 
 Public Function HexDump() As String
     Dim i As Long, s As String ': s = ""
-    For i = 0 To Variant_Size / 4 - 1
+    For i = 0 To MEVbVarType.SizeOf_Variant / 4 - 1
         s = s & Hex$(Me.Slot(i)) & vbCrLf
     Next
     HexDump = s
 End Function
 
 Public Property Get SizeInBytes() As Integer
-    SizeInBytes = Variant_Size
+    SizeInBytes = MEVbVarType.SizeOf_Variant
 End Property
 
 'all GetData-functions:
@@ -159,7 +162,7 @@ End Function
 #End If
 
 Public Function GetLongPtr() As LongPtr
-    RtlMoveMemory GetLongPtr, ByVal Me.Ptr + 8, MPtr.LongPtr_Size
+    RtlMoveMemory GetLongPtr, ByVal Me.Ptr + 8, MPtr.SizeOf_LongPtr
 End Function
 
 Public Function GetSingle() As Single
@@ -191,7 +194,7 @@ Public Function GetObject() As Object
 End Function
 
 Public Function GetDecimal() As Variant
-    RtlMoveMemory GetDecimal, ByVal Me.Ptr, Variant_Size
+    RtlMoveMemory GetDecimal, ByVal Me.Ptr, MEVbVarType.SizeOf_Variant
 End Function
 
 Public Function ToStr() As String
