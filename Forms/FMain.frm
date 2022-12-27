@@ -9,10 +9,18 @@ Begin VB.Form FMain
    ScaleHeight     =   12975
    ScaleWidth      =   11340
    StartUpPosition =   3  'Windows-Standard
+   Begin VB.CommandButton Command3 
+      Caption         =   "Command3"
+      Height          =   375
+      Left            =   8760
+      TabIndex        =   5
+      Top             =   120
+      Width           =   1455
+   End
    Begin VB.CommandButton Command2 
       Caption         =   "Command2"
       Height          =   375
-      Left            =   8400
+      Left            =   7200
       TabIndex        =   4
       Top             =   120
       Width           =   1455
@@ -20,10 +28,10 @@ Begin VB.Form FMain
    Begin VB.CommandButton Command1 
       Caption         =   "Command1"
       Height          =   375
-      Left            =   5760
+      Left            =   5640
       TabIndex        =   3
       Top             =   120
-      Width           =   2535
+      Width           =   1455
    End
    Begin VB.CommandButton BtnTestArithmetic 
       Caption         =   "Test Arithmetic Functions"
@@ -102,6 +110,7 @@ Private Sub Command1_Click()
     Debug.Print v1.HexDump
     Debug.Print v2.HexDump
 End Sub
+
 Private Sub HexDump(v As VVariant)
     Debug.Print v.VarTypeToStr & " " & v.Value
     Debug.Print ""
@@ -117,6 +126,23 @@ Private Sub Command2_Click()
     MsgBox vv.VarTypeToStr
     
     'MsgBox vv.Value(0)
+    
+End Sub
+
+Private Sub Command3_Click()
+    
+    'Dim v1 As VVariant: Set v1 = MNew.VVariantVt(vbUInteger, &HF000)
+    Dim v1 As VVariant: Set v1 = MNew.VVariantVt(vbULong, &H70000001)
+    MsgBox v1.Value & " " & v1.ToStr & " &H" & Hex(v1.Value)
+    
+    'Dim v2 As VVariant: Set v2 = MNew.VVariantVt(vbUInteger, &HFFF)
+    Dim v2 As VVariant: Set v2 = MNew.VVariantVt(vbULong, &H70000001)
+    
+    MsgBox v2.Value & " " & v2.ToStr & " &H" & Hex(v2.Value)
+    
+    v1.VAdd v2.Value
+    
+    MsgBox v1.Value & " " & v1.ToStr & " &H" & Hex(v1.Value)
     
 End Sub
 

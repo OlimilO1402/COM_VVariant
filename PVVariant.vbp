@@ -9,6 +9,7 @@ Module=MErr; ..\Err_CorrectErrorHandling\Modules\MErr.bas
 Class=VVariant; Classes\VVariant.cls
 Class=VVariantPtr; Classes\VVariantPtr.cls
 Class=TestDummy; Classes\TestDummy.cls
+Module=MUnsigned; ..\Asm_Unsigned\Modules\MUnsigned.bas
 ResFile32="Resources\MyRes.res"
 IconForm="FMain"
 Startup="FMain"

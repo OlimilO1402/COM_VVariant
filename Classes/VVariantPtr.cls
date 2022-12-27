@@ -193,7 +193,7 @@ End Function
 #End If
 
 Public Function GetLongPtr() As LongPtr
-    RtlMoveMemory GetLongPtr, ByVal Me.Ptr + 8, MPtr.LongPtr_Size
+    RtlMoveMemory GetLongPtr, ByVal Me.Ptr + 8, MPtr.SizeOf_LongPtr
 End Function
 
 Public Function GetString() As String

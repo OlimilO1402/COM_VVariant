@@ -96,6 +96,7 @@ End Sub
 
 Friend Sub NewC(other As VVariant)
     New_ other.Value
+    Me.VarType = other.VarType
 End Sub
 
 Friend Function Clone() As VVariant
@@ -231,11 +232,27 @@ Public Function VAbs() As VVariant
     Dim vRes: If VarAbs(m_Var.Value, vRes) = S_OK Then m_Var.Value = vRes
     Set VAbs = Me
 End Function
+
 Public Function VAdd(Value) As VVariant
-    'Returns the sum of two variants.
-    Dim vRes, hr As Long
-    
-    hr = VarAdd(m_Var.Value, Value, ByVal VarPtr(vRes))
+    'takes a Variant Value and returns this object with the sum of the two variants
+    Dim vRes, hr As Long, vt As EVbVarType: vt = Me.VarType
+    'Select Case Me.VarType
+    Select Case vt
+    Case EVbVarType.vbUInteger
+        'm_Var.Value = MUnsigned.U2Add_ref(ByVal VarPtr(m_Var) + 8, ByVal VarPtr(Value) + 8)
+        'Me.VarType = EVbVarType.vbUInteger
+        'vRes = MUnsigned.UInt16_Add(CInt(m_Var.Value), CInt(Value))
+        'Me.
+    Case EVbVarType.vbULong
+        Dim p1 As LongPtr: p1 = VarPtr(m_Var) + 8
+        Dim p2 As LongPtr: p2 = VarPtr(Value) + 8
+        m_Var.Value = MUnsigned.U4Add_ref(ByVal p1, ByVal p2)
+        'vRes = MUnsigned.UInt32_Add(CLng(m_Var.Value), CLng(Value))
+        Me.VarType = EVbVarType.vbULong
+        Exit Function
+    Case vbByte, vbInteger, vbLong, vbSingle, vbDouble
+        hr = VarAdd(m_Var.Value, Value, ByVal VarPtr(vRes))
+    End Select
     If hr = S_OK Then
         m_Var.Value = vRes
     Else
@@ -244,11 +261,13 @@ Public Function VAdd(Value) As VVariant
     End If
     Set VAdd = Me
 End Function
+
 Public Function VAnd(Value) As VVariant
     'Performs a bitwise And operation between two variants of any integral type.
     Dim vRes: If VarAnd(m_Var.Value, Value, vRes) = S_OK Then m_Var.Value = vRes
     Set VAnd = Me
 End Function
+
 Public Function VDiv(Value) As VVariant
     'Returns the result from dividing two variants.
     Dim vRes: If VarDiv(m_Var.Value, Value, vRes) = S_OK Then m_Var.Value = vRes
